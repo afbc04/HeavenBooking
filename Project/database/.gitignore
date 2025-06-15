@@ -1,5 +1,1 @@
-data_large_errors/
-data_tiny_errors/
-dataset/
-dataset_differences/*.csv
-dataset_original.zip
+*.csv
