@@ -282,7 +282,7 @@ Os requisitos funcionais do backend estão apresentados em formato de tabela, se
 | **URL**| `GET /users/:id` |
 | **Funcionalidade** | Dado um Utilizador, devemos dar algumas métricas sobre ele |
 | **Entrada** | ID do Utilizador |
-| **Saída** | Nome, sexo, idade, código do país, passaporte, número de voos, número de reservas, gasto total, número de voos perdidos, número de reservas reembolsadas e se está ativo |
+| **Saída** | Nome, sexo, idade, código do país, passaporte, número de voos, número de reservas efetuadas ou reembolsadas, gasto total, número de voos perdidos e embarcados e se está ativo |
 | **Pré-Condição** | Utilizador existe |
 | **Pós-Condição** | Informações do Utilizador |
 | **Exceções** | Utilizador não existe |
@@ -342,7 +342,7 @@ _Nota : A lista deve estar ordenada de forma decrescente com base na data de cri
 | **URL**| `GET /reservations/:id` |
 | **Funcionalidade** | Dado uma Reserva, devemos dar algumas métricas sobre ela |
 | **Entrada** | ID da Reserva |
-| **Saída** | Nome, identificador e estrelas do hotel, datas de inicio e fim, se inclui pequeno-almoço, a quantidade de noites, preço da reserva e se foi reembolsada |
+| **Saída** | Nome, identificador e estrelas do hotel, identificador do utilizador, datas de inicio e fim, se inclui pequeno-almoço, a quantidade de noites, preço da reserva, a sua classificação e se foi reembolsada |
 | **Pré-Condição** | Reserva existe |
 | **Pós-Condição** | Se a reserva foi reembolsada, não mostra o seu preço, se inclui pequeno-almoço e a quantidade de noites. Caso contrário, dá todas as informações ditas |
 | **Exceções** | Reserva não existe |
@@ -460,7 +460,7 @@ _Nota : A lista deve estar ordenada de forma decrescente com base na data de cri
 | **URL**| `GET /hotels/:id` |
 | **Funcionalidade** | Dado um Hotel, devemos dar algumas métricas sobre ele |
 | **Entrada** | ID do Hotel |
-| **Saída** | Nome, as estrelas, o endereço, o país onde se localiza juntamente com o código do país, o website, se está ativo e o número de reservas |
+| **Saída** | Nome, as estrelas, o endereço, o país onde se localiza usando o código do país, o website, se está ativo e o número de reservas |
 | **Pré-Condição** | Hotel existe |
 | **Pós-Condição** | Informações do Hotel |
 | **Exceções** | Hotel não existe |
@@ -517,7 +517,7 @@ _Nota : A lista deve estar ordenada de forma decrescente com base na data de cri
 | **URL**| `GET /airports/:id` |
 | **Funcionalidade** | Dado um Aeroporto, devemos dar algumas métricas sobre ele |
 | **Entrada** | ID do Aeroporto |
-| **Saída** | Nome, código do país, páis, ano de inauguração, se está ativo e quantos voos partiram e chegaram no aeroporto |
+| **Saída** | Nome, código do país, ano de inauguração, se está ativo e quantos voos partiram e chegaram no aeroporto |
 | **Pré-Condição** | Aeroporto existe |
 | **Pós-Condição** | Informações do Aeroporto |
 | **Exceções** | Aeroporto não existe |
@@ -596,6 +596,20 @@ _Nota : Para comparação de voos, utiliza-se a data de partida esperada. Em cas
 
 |  | **Requisito 28** |
 |------------|---|
+| **Título** | Lista de Voos e Reservas de um Utilizador |
+| **URL**| `GET /flights-and-reservations-of-user/:id` |
+| **Funcionalidade** | Dado um Utilizador, devemos apresentar os seus voos e reservas , da mais recente para a mais antiga |
+| **Entrada** | ID do Utilizador |
+| **Saída** | IDs dos voos e reservas, as suas datas de inicio e se é uma reserva ou voo |
+| **Pré-Condição** | Utilizador existe e está ativo |
+| **Pós-Condição** | Voos e Reservas do Utilizador |
+| **Exceções** | Utilizador não existe ou não está ativo |
+
+_Nota : Para comparação de voos e reservas, utiliza-se a data de partida esperada ou data de inicio. Em caso de empate, é utilizado o seu ID, de forma crescente_  
+_Nota 2 : No caso de reservas, considera-se que a hora é 00:00:00_
+
+|  | **Requisito 29** |
+|------------|---|
 | **Título** | Classificação média de um Hotel |
 | **URL**| `GET /rating-hotel/:id` |
 | **Funcionalidade** | Dado um Hotel, devemos indicar qual a sua classificação média de um hotel com base na classificação das suas reservas |
@@ -607,7 +621,7 @@ _Nota : Para comparação de voos, utiliza-se a data de partida esperada. Em cas
 
 _Nota : as classificações consideradas das reservas devem existir. Se uma reserva não ter classificação, não deverá ser utilizada para o calculo da classificação média_
 
-|  | **Requisito 29** |
+|  | **Requisito 30** |
 |------------|---|
 | **Título** | Classificações de um Hotel |
 | **URL**| `GET /all-ratings-hotel/:id` |
@@ -618,7 +632,7 @@ _Nota : as classificações consideradas das reservas devem existir. Se uma rese
 | **Pós-Condição** | Classificações do hotel |
 | **Exceções** | Hotel não existe |
 
-|  | **Requisito 30** |
+|  | **Requisito 31** |
 |------------|---|
 | **Título** | Reservas de um Hotel |
 | **URL**| `GET /reservations-of-hotel/:id` |
@@ -629,7 +643,7 @@ _Nota : as classificações consideradas das reservas devem existir. Se uma rese
 | **Pós-Condição** | Reservas do hotel |
 | **Exceções** | Hotel não existe |
 
-|  | **Requisito 31** |
+|  | **Requisito 32** |
 |------------|---|
 | **Título** | Voos de um Aeroporto |
 | **URL**| `GET /flights-of-airport/:id/:date_begin/:date_end` |
@@ -640,12 +654,25 @@ _Nota : as classificações consideradas das reservas devem existir. Se uma rese
 | **Pós-Condição** | Voos do Aeroporto |
 | **Exceções** | Aeroporto não existe ou datas inválidas |
 
-|  | **Requisito 32** |
+|  | **Requisito 33** |
+|------------|---|
+| **Título** | Top N aeroportos com mais passageiros |
+| **URL**| `GET /top-passengers-airport/:year/:number` |
+| **Funcionalidade** | Dado um ano e um número, devemos indicar quais são os top N (este N é o número) aeroportos com maior número de passageiros (que partiram e chegaram) num certo ano |
+| **Entrada** | Ano e um Número |
+| **Saída** | Lista de aeroportos ordenados, onde cada elemento tem o ID do aeroporto e o número de passageiros |
+| **Pré-Condição** | Ano válido e Número positivo |
+| **Pós-Condição** | Lista de aeroportos |
+| **Exceções** | Ano inválido ou Número zero ou negativo |
+
+_Nota : Na comparação, caso 2 aeroportos tenham o mesmo número, deverá ser usado o ID, de forma crescente, como forma de desempate_
+
+|  | **Requisito 34** |
 |------------|---|
 | **Título** | Top aeroportos com mais passageiros |
 | **URL**| `GET /top-passengers-airport/:year` |
 | **Funcionalidade** | Dado um ano e um número, devemos indicar quais são os top aeroportos com maior número de passageiros (que partiram e chegaram) num certo ano |
-| **Entrada** | Ano e um Número |
+| **Entrada** | Ano |
 | **Saída** | Lista de aeroportos ordenados, onde cada elemento tem o ID do aeroporto e o número de passageiros |
 | **Pré-Condição** | Ano válido |
 | **Pós-Condição** | Lista de aeroportos |
@@ -653,7 +680,7 @@ _Nota : as classificações consideradas das reservas devem existir. Se uma rese
 
 _Nota : Na comparação, caso 2 aeroportos tenham o mesmo número, deverá ser usado o ID, de forma crescente, como forma de desempate_
 
-|  | **Requisito 33** |
+|  | **Requisito 35** |
 |------------|---|
 | **Título** | Top aeroportos com a maior mediana de atrasos |
 | **URL**| `GET /top-delay-airport` |
@@ -667,7 +694,21 @@ _Nota : Na comparação, caso 2 aeroportos tenham o mesmo número, deverá ser u
 _Nota : Na comparação, caso 2 aeroportos tenham a mesma mediana, deverá ser usado o ID, de forma crescente, como forma de desempate_  
 _Nota 2 : O atraso deverá ser apresentado em segundos_
 
-|  | **Requisito 34** |
+|  | **Requisito 36** |
+|------------|---|
+| **Título** | Top N aeroportos com a maior mediana de atrasos |
+| **URL**| `GET /top-delay-airport/:number` |
+| **Funcionalidade** | Devemos indicar o top N (N é o número indicado) aeroportos com maior mediana de atrasos |
+| **Entrada** | Número |
+| **Saída** | Lista de aeroportos ordenados, onde cada elemento tem o ID do aeroporto e a mediana de atrasos |
+| **Pré-Condição** | Número positivo |
+| **Pós-Condição** | Lista de aeroportos |
+| **Exceções** | Número nulo ou negativo |
+
+_Nota : Na comparação, caso 2 aeroportos tenham a mesma mediana, deverá ser usado o ID, de forma crescente, como forma de desempate_  
+_Nota 2 : O atraso deverá ser apresentado em segundos_
+
+|  | **Requisito 37** |
 |------------|---|
 | **Título** | Top hoteis com mais reservas |
 | **URL**| `GET /top-reservations-hotels` |
@@ -680,7 +721,21 @@ _Nota 2 : O atraso deverá ser apresentado em segundos_
 
 _Nota : Na comparação, caso 2 hoteis tenham a mesma quantidade de reservas, deverá ser usado o ID, de forma crescente, como forma de desempate_  
 
-|  | **Requisito 35** |
+|  | **Requisito 38** |
+|------------|---|
+| **Título** | Top N hoteis com mais reservas |
+| **URL**| `GET /top-reservations-hotels/:number` |
+| **Funcionalidade** | Devemos indicar o top N (N sendo o número indicado) hoteis com mais reservas |
+| **Entrada** | Número |
+| **Saída** | Lista de hoteis ordenados, onde cada elemento tem o ID do hotel e a quantidade de reservas |
+| **Pré-Condição** | Número positivo |
+| **Pós-Condição** | Lista de hoteis |
+| **Exceções** | Número nulo ou negativo |
+
+_Nota : Na comparação, caso 2 hoteis tenham a mesma quantidade de reservas, deverá ser usado o ID, de forma crescente, como forma de desempate_  
+
+
+|  | **Requisito 39** |
 |------------|---|
 | **Título** | Receita total de um hotel |
 | **URL**| `GET /revenue-hotel/:id/:date_begin/:date_end` |
@@ -691,7 +746,7 @@ _Nota : Na comparação, caso 2 hoteis tenham a mesma quantidade de reservas, de
 | **Pós-Condição** | Receita total do hotel |
 | **Exceções** | Hotel não existe ou datas inválidas |
 
-|  | **Requisito 36** |
+|  | **Requisito 40** |
 |------------|---|
 | **Título** | Utilizadores cujo nome tem o prefixo |
 | **URL**| `GET /prefix-users/:prefix` |
@@ -704,7 +759,7 @@ _Nota : Na comparação, caso 2 hoteis tenham a mesma quantidade de reservas, de
 
 _Nota : Na comparação, caso dois utilizadores tenham o mesmo nome, deverá ser usado o ID, de forma crescente, como critério de desempate_
 
-|  | **Requisito 37** |
+|  | **Requisito 41** |
 |------------|---|
 | **Título** | Métricas totais |
 | **URL**| `GET /metrics-all` |
@@ -723,7 +778,7 @@ _Notas:_
 - _Para as reservas, usar da data de inicio_
 - _A ordenação deverá ser de forma crescente consoante o aaaa/mm/dd_
 
-|  | **Requisito 38** |
+|  | **Requisito 42** |
 |------------|---|
 | **Título** | Métricas de um ano |
 | **URL**| `GET /metrics-year/:year` |
@@ -742,7 +797,7 @@ _Notas:_
 - _Para as reservas, usar da data de inicio_
 - _A ordenação deverá ser de forma crescente consoante o aaaa/mm/dd_
 
-|  | **Requisito 39** |
+|  | **Requisito 43** |
 |------------|---|
 | **Título** | Métricas de um mês de um ano |
 | **URL**| `GET /metrics-month/:year/:month` |
@@ -761,21 +816,519 @@ _Notas:_
 - _Para as reservas, usar da data de inicio_
 - _A ordenação deverá ser de forma crescente consoante o aaaa/mm/dd_
 
-|  | **Requisito 40** |
+|  | **Requisito 44** |
 |------------|---|
 | **Título** | Informações globais |
 | **URL**| `GET /global-information` |
-| **Funcionalidade** | Deverá ser apresentado o número de utilizadores registados, o número de utilizadores ativos e inativos, o número de reservas, o número de reservas reembolsadas e não reembolsadas, o número de voos, o número de voos efetuados, cancelados e atrasados, o número de passageiros que embarcaram e que não embarcaram, o número de hoteis, o número de hoteis ativos e não ativos, o número de aeroportos e o número de aeroportos ativos e inativos |
+| **Funcionalidade** | Deverá ser apresentado o número de utilizadores registados, o número de utilizadores ativos e inativos, o número de reservas, o número de reservas reembolsadas e não reembolsadas, o número de voos, o número de voos efetuados, cancelados e atrasados, o número de passageiros que embarcaram e que não embarcaram, o número de hoteis, o número de hoteis ativos e não ativos, o número de aeroportos, o número de aeroportos ativos e inativos e o número de países registados |
 | **Entrada** | - |
 | **Saída** | Todas as informações listadas |
 | **Pré-Condição** | - |
 | **Pós-Condição** | Todas as informações listadas |
 | **Exceções** | - |
 
+|  | **Requisito 45** |
+|------------|---|
+| **Título** | Adicionar vários Utilizadores |
+| **URL**| `POST /users-batch` |
+| **Funcionalidade** | Dado um ficheiro csv com utilizadores, devemos adicionar todos os utilizadores no sistema |
+| **Entrada** | Ficheiro csv com os utilizadores |
+| **Saída** | Quantos utilizadores foram lidos, quantos foram incorporados, quantos foram rejeitados e a lista de utilizadores que não foram inseridos |
+| **Pré-Condição** | Ficheiro tem que ser em formato csv |
+| **Pós-Condição** | Utilizadores do ficheiro csv são inseridos no sistema |
+| **Exceções** | Ficheiro não pode ser lido ou não está em formato csv |
+
+|  | **Requisito 46** |
+|------------|---|
+| **Título** | Adicionar várias Reservas |
+| **URL**| `POST /reservations-batch` |
+| **Funcionalidade** | Dado um ficheiro csv com reservas, devemos adicionar todas as reservas no sistema |
+| **Entrada** | Ficheiro csv com as reservas |
+| **Saída** | Quantas reservas foram lidas, quantos foram incorporadas, quantos foram rejeitadas e a lista de reservas que não foram inseridas |
+| **Pré-Condição** | Ficheiro tem que ser em formato csv |
+| **Pós-Condição** | Reservas do ficheiro csv são inseridas no sistema |
+| **Exceções** | Ficheiro não pode ser lido ou não está em formato csv |
+
+|  | **Requisito 47** |
+|------------|---|
+| **Título** | Adicionar vários Hoteis |
+| **URL**| `POST /hotels-batch` |
+| **Funcionalidade** | Dado um ficheiro csv com hoteis, devemos adicionar todos os hoteis no sistema |
+| **Entrada** | Ficheiro csv com os hoteis |
+| **Saída** | Quantos hoteis foram lidos, quantos foram incorporados, quantos foram rejeitados e a lista de hoteis que não foram inseridos |
+| **Pré-Condição** | Ficheiro tem que ser em formato csv |
+| **Pós-Condição** | Hoteis do ficheiro csv são inseridos no sistema |
+| **Exceções** | Ficheiro não pode ser lido ou não está em formato csv |
+
+|  | **Requisito 48** |
+|------------|---|
+| **Título** | Adicionar vários Voos |
+| **URL**| `POST /flights-batch` |
+| **Funcionalidade** | Dado um ficheiro csv com voos, devemos adicionar todos os voos no sistema |
+| **Entrada** | Ficheiro csv com os voos |
+| **Saída** | Quantos voos foram lidos, quantos foram incorporados, quantos foram rejeitados e a lista de voos que não foram inseridos |
+| **Pré-Condição** | Ficheiro tem que ser em formato csv |
+| **Pós-Condição** | Voos do ficheiro csv são inseridos no sistema |
+| **Exceções** | Ficheiro não pode ser lido ou não está em formato csv |
+
+|  | **Requisito 49** |
+|------------|---|
+| **Título** | Adicionar vários Aeroportos |
+| **URL**| `POST /airports-batch` |
+| **Funcionalidade** | Dado um ficheiro csv com aeroportos, devemos adicionar todos os aeroportos no sistema |
+| **Entrada** | Ficheiro csv com os aeroportos |
+| **Saída** | Quantos aeroportos foram lidos, quantos foram incorporados, quantos foram rejeitados e a lista de aeroportos que não foram inseridos |
+| **Pré-Condição** | Ficheiro tem que ser em formato csv |
+| **Pós-Condição** | Aeroportos do ficheiro csv são inseridos no sistema |
+| **Exceções** | Ficheiro não pode ser lido ou não está em formato csv |
+
+|  | **Requisito 50** |
+|------------|---|
+| **Título** | Adicionar vários Passageiros |
+| **URL**| `POST /passengers-batch` |
+| **Funcionalidade** | Dado um ficheiro csv com passageiros, devemos adicionar todos os passageiros no sistema |
+| **Entrada** | Ficheiro csv com os passageiros |
+| **Saída** | Quantos passageiros foram lidos, quantos foram incorporados, quantos foram rejeitados e a lista de passageiros que não foram inseridos |
+| **Pré-Condição** | Ficheiro tem que ser em formato csv |
+| **Pós-Condição** | Passageiros do ficheiro csv são inseridos no sistema |
+| **Exceções** | Ficheiro não pode ser lido ou não está em formato csv |
+
+|  | **Requisito 51** |
+|------------|---|
+| **Título** | Listar os países |
+| **URL**| `GET /countries` |
+| **Funcionalidade** | Apresenta todos os países registados no sistema |
+| **Entrada** | - |
+| **Saída** | Lista de países, onde em cada país tem a quantidade de utilizadores, hoteis, aeroportos, voos, reservas e passageiros que chegaram e partiram de um país ou que foram realizados nesse país (no caso de reservas, voos e passageiros) |
+| **Pré-Condição** | - |
+| **Pós-Condição** | Lista de países |
+| **Exceções** | - |
+
+|  | **Requisito 52** |
+|------------|---|
+| **Título** | Resumo de um país |
+| **URL**| `GET /countries/:id` |
+| **Funcionalidade** | Apresenta informações de um país |
+| **Entrada** | - |
+| **Saída** | ID e nome do país, a quantidade de utilizadores ativos e inativos, hoteis ativos e inativos, aeroportos ativos e inativos, voos efetuados e cancelados, reservas efetuadas ou reembolsadas e passageiros que chegaram e partiram de um país ou que foram realizados nesse país (no caso de reservas, voos e passageiros. Nos passageiros apenas os que embarcaram) |
+| **Pré-Condição** | País tem que existir |
+| **Pós-Condição** | Informação do País |
+| **Exceções** | País não existe |
+
+|  | **Requisito 53** |
+|------------|---|
+| **Título** | Receita total de um hotel |
+| **URL**| `GET /revenue-all-time-hotel/:id` |
+| **Funcionalidade** | Dado um Hotel, devemos indicar qual a receita total que o hotel irá obter, apenas com o preço por noite das reservas |
+| **Entrada** | ID do Hotel |
+| **Saída** | Receita total do hotel |
+| **Pré-Condição** | Hotel existe |
+| **Pós-Condição** | Receita total do hotel |
+| **Exceções** | Hotel não existe |
+
 ### 3.2. Validação de dados
 
+Para a validação dos dados, aqui estão os requisitos que são necessários para que entradas (seja utilizadores, voo, reservas, etc...) sejam válidas:
+- Dados inválidos deverão ser completamente eliminados, até dados válidos que os mencionam
+- Datas têm formato nnnn/nn/nn, ou nnnn/nn/nn nn:nn:nn caso a data contenha tempo, onde n é um número entre 0-9
+- Mês deverá estar entre 1-12 e o dia deve estar entre 1-31 (vamos considerar que todos os meses têm 31 dias)
+- A hora deverá estar entre 0-23, os minutos entre 0-59 e os segundos 0-59
+- As datas de fim/chegada não poderão ser superiores às datas de inicio/partida
+- A data de criação de conta tem que ser maior que a data de nascimento do utilizador
+- Email deverá ter o formato <username>@<domain>.<TLD>. Username e domain têm que ter pelo menos tamanho 1 e TLD tem que ter pelo menos tamanho 2
+- Country Code deverá ser formado por 2 letras
+- Account_status deverá ter o valor "active" ou "inactive" (uso de maiúsculas e minúsculas não importa)
+- O número de lugares de um voo não poderá ser inferior ao número de passageiros
+- IDs do aeroporto deverá ser constituido por 3 letras
+- O número de estrelas de um hotel deverá estar entre 1-5
+- A percentagem de imposto da cidade de uma reserva tem que ser um valor inteiro maior ou igual a zero
+- Preço por noite de uma reserva tem que ser um valor inteiro maior que zero
+- Os valores booleanos deverão ser "f", "false", "0", "" para valores falsos ou "t", "true", "1" para valores verdadeiros
+- As classificações de uma reserva têm que ter um valor inteiro entre 1-5 ou vazia caso o utilizador não tenha classificado o hotel
+- Utilizador e Hotel da reserva têm que existir
+- Os aeroportos do voo têm que existir
+- Os códigos IATA dos aeroportos têm que ser constituido por 2 letras, caso exista
+- A data de inauguração de um aeroporto têm que ser um ano
+- O ID do voo e o ID do utilizador dos passageiros têm que existir
+- Os campos que não podem ser vazios são:
+    - **Utilizadores :**
+        - ID
+        - Nome
+        - Número de telemóvel
+        - Género
+        - Passaporte
+        - Morada
+        - Método de pagamento
+    - **Reservas :**
+        - ID
+        - ID do utilizador
+        - ID do hotel
+        - Reembolsado
+    - **Hoteis :**
+        - ID
+        - Nome
+        - Morada
+        - Código do País
+        - País
+        - Número de Telemóvel
+        - Código Pin
+        - Ativo
+    - **Voos :**
+        - ID
+        - Companhia
+        - Modelo do avião
+        - Piloto
+        - Copiloto
+        - Cancelado
+    - **Aeroportos :**
+        - ID
+        - Nome
+        - País
+        - Código do País
+        - Data de Inauguração
+        - Ativo
+    - **Passageiros :**
+        - ID do voo
+        - ID do utilizador
+        - Se o utilizador embarcou
 
 ### 3.3. Requisitos Funcionais - Frontend
+
+Os requisitos funcionais do frontend estão apresentados em formato de lista, seguindo a seguinte estrutura:
+- **Título :** título do requisito
+- **URL :** url que será usado no frontend
+- **Descrição :** o que o requisito faz
+- **Informações :** o que será apresentado na página do frontend
+- **Funcionalidades :** o que poderá acontecer nessa página
+- **Exceções :** o que precisa acontecer para que a página apresentada não seja a esperada
+
+_Notas : O frontend deverá ter um sistema de idioma permitindo Inglês e Português_
+
+| **Requisito 1** |
+|---------------|
+- **Título :** Página de um Utilizador
+- **URL :** `GET /users/:id`
+- **Descrição :** Apresenta as informações do Utilizador indicado
+- **Informações :**
+    - Apresenta o ID, nome, sexo, idade, código do país, passaporte, número de reservas efetuadas e reembolsadas, gasto total, número de voos perdidos e efetuados e se está ativo
+    - Lista de reservas e voos do utilizador
+- **Funcionalidades :**
+    - O código de país deve ser clicável e devemos ir para a página do país
+    - Deverá ser possível voltar atras
+    - Deverá ser possível ir à página de utilizadores
+    - Deverá ser possível ver apenas voos ou reservas do utilizador
+    - Deverá ser possível apagar ou editar o utilizador
+- **Exceções :**
+    - Utilizador não existe
+
+| **Requisito 2** |
+|---------------|
+- **Título :** Página de Utilizadores
+- **URL :** `GET /users`
+- **Descrição :** Apresenta as informações de todos os utilizadores
+- **Informações :**
+    - Lista de utilizadores
+    - Em cada Utilizador, apresenta o ID, nome, número de reservas, número de voos e se está ativo
+- **Funcionalidades :**
+    - O ID do utilizador poderá ser clicável, redirecionando para a página do utilizador
+    - Deverá ser possível escrever um prefixo e pesquisar utilizadores cujo nome tem esse prefixo
+    - Deverá ser possível voltar para a página inicial
+    - Deverá ter um botão para adicionar um novo utilizador
+    - Deverá ser possível apagar ou editar um utilizador específico
+    - Deverá ter um sistema de paginação
+- **Exceções :**
+
+| **Requisito 3** |
+|---------------|
+- **Título :** Página de Editar um Utilizador
+- **URL :** `GET /edit-user/:id`
+- **Descrição :** Apresenta as informações do Utilizador e é possível edita-las
+- **Informações :**
+    - Informações do utilizador
+    - Lista de reservas e voos do utilizador
+- **Funcionalidades :**
+    - Os campos do utilizador, exceto o ID, poderão ser editáveis
+    - É possível remover reservas e voos
+    - É possível adicionar reservas e voos
+    - Tem que ter um botão onde as alterações são submetidas
+- **Exceções :**
+    - Campos estão inválidos
+    - Utilizador não existe
+
+| **Requisito 4** |
+|---------------|
+- **Título :** Página de Criar um Utilizador
+- **URL :** `GET /create-user`
+- **Descrição :** Apresenta as informações do novo Utilizador
+- **Informações :**
+    - Campos com as informações do novo utilizador
+- **Funcionalidades :**
+    - Os campos do utilizador poderão ser editáveis ou selecionáveis
+    - É possível remover reservas e voos
+    - É possível adicionar reservas e voos
+    - Tem que ter um botão onde é possível submeter o novo utilizador
+- **Exceções :**
+    - Campos estão inválidos
+
+| **Requisito 5** |
+|---------------|
+- **Título :** Página de uma Reserva
+- **URL :** `GET /reservations/:id`
+- **Descrição :** Apresenta as informações da Reserva indicada
+- **Informações :**
+    - Apresenta o ID, nome, ID e estrelas do hotel, datas de início e fim, se inclui pequeno-almoço, a quantidade de noites, preço da reserva, o identificador do utilizador, a classificação e se foi reembolsada
+- **Funcionalidades :**
+    - O ID do utilizador poderá ser clicável e seremos redirecionados para a página do utilizador
+    - O ID do hotel poderá ser clicável e seremos redirecionados para a página do hotel
+    - Deverá ser possível voltar atras
+    - Deverá ser possível ir à página de reservas
+    - Deverá ser possível apagar ou editar a reserva
+- **Exceções :**
+    - Reserva não existe
+
+| **Requisito 6** |
+|---------------|
+- **Título :** Página de Reservas
+- **URL :** `GET /reservations`
+- **Descrição :** Apresenta as informações de todas as reservas
+- **Informações :**
+    - Lista de reservas
+    - Em cada Reserva, apresenta o ID, ID do utilizador, ID do hotel, classificação, preço total e se foi reembolsada
+- **Funcionalidades :**
+    - O ID do utilizador poderá ser clicável, redirecionando para a página do utilizador
+    - O ID do hotel poderá ser clicável e seremos redirecionados para a página do hotel
+    - Deverá ser possível voltar para a página inicial
+    - Deverá ter um botão para adicionar uma nova reserva
+    - Deverá ser possível apagar ou editar uma reserva específica
+    - Deverá ter um sistema de paginação
+- **Exceções :**
+
+| **Requisito 7** |
+|---------------|
+- **Título :** Página de Editar uma Reserva
+- **URL :** `GET /edit-reservation/:id`
+- **Descrição :** Apresenta as informações da Reserva e é possível edita-las
+- **Informações :**
+    - Informações da Reserva
+- **Funcionalidades :**
+    - Os campos da reserva, exceto o ID, poderão ser editáveis
+    - É possível alterar o Utilizador
+    - É possível alterar o Hotel
+    - Tem que ter um botão onde as alterações são submetidas
+- **Exceções :**
+    - Campos estão inválidos
+    - Reserva não existe
+
+| **Requisito 8** |
+|---------------|
+- **Título :** Página de Criar uma Reserva
+- **URL :** `GET /create-reservation`
+- **Descrição :** Apresenta as informações da nova Reserva
+- **Informações :**
+    - Campos com as informações da nova Reserva
+- **Funcionalidades :**
+    - Os campos da reserva poderão ser editáveis ou selecionáveis _(ID não poderá ser escolhido)_
+    - É possível escolher o Utilizador e o Hotel
+    - Tem que ter um botão onde é possível submeter a nova reserva
+- **Exceções :**
+    - Campos estão inválidos
+
+| **Requisito 9** |
+|---------------|
+- **Título :** Página de um Hotel
+- **URL :** `GET /hotels/:id`
+- **Descrição :** Apresenta as informações do Hotel indicado
+- **Informações :**
+    - Apresenta o ID, nome, estrelas, endereço, país (código), website, classificação média, classificações, receita total e se está ativo
+    - Receita entre 2 datas
+    - Lista de reservas
+- **Funcionalidades :**
+    - O código de país deve ser clicável e devemos ir para a página do país
+    - Deverá ser possível voltar atras
+    - Deverá ser possível ir à página de hoteis
+    - Deverá ser possível clicar no ID numa reserva e ir para a página da reserva
+    - Deverá ser possível apagar ou editar uma reserva
+    - Deverá ser possível adicionar uma reserva
+    - Deverá ser possível escolher as datas para obter a receita do hotel
+- **Exceções :**
+    - Hotel não existe
+
+| **Requisito 10** |
+|---------------|
+- **Título :** Página de Hoteis
+- **URL :** `GET /hotels`
+- **Descrição :** Apresenta as informações de todos os hoteis
+- **Informações :**
+    - Lista de hoteis
+    - Em cada Hotel, apresenta o ID, nome, número de estrelas, número de reservas e se está ativo
+- **Funcionalidades :**
+    - O ID do hotel poderá ser clicável, redirecionando para a página do hotel
+    - Deverá ter um botão onde é possível ver o Top hoteis
+    - Deverá ser possível voltar para a página inicial
+    - Deverá ter um botão para adicionar um novo hotel
+    - Deverá ser possível apagar ou editar um hotel específico
+    - Deverá ter um sistema de paginação
+- **Exceções :**
+
+| **Requisito 11** |
+|---------------|
+- **Título :** Página de Editar um Hotel
+- **URL :** `GET /edit-hotel/:id`
+- **Descrição :** Apresenta as informações do Hotel e é possível edita-las
+- **Informações :**
+    - Informações do hotel
+    - Lista de reservas do hotel
+- **Funcionalidades :**
+    - Os campos do hotel, exceto o ID, classificações e receita, poderão ser editáveis
+    - É possível remover e adicionar reservas
+    - Tem que ter um botão onde as alterações são submetidas
+- **Exceções :**
+    - Campos estão inválidos
+    - Hotel não existe
+
+| **Requisito 12** |
+|---------------|
+- **Título :** Página de Criar um Hotel
+- **URL :** `GET /create-hotel`
+- **Descrição :** Apresenta as informações do novo Hotel
+- **Informações :**
+    - Campos com as informações do novo Hotel
+- **Funcionalidades :**
+    - Os campos do hotel poderão ser editáveis ou selecionáveis
+    - É possível remover e adicionar reservas
+    - Tem que ter um botão onde é possível submeter o novo hotel
+- **Exceções :**
+    - Campos estão inválidos
+
+| **Requisito 13** |
+|---------------|
+- **Título :** Página de um Voo
+- **URL :** `GET /flights/:id`
+- **Descrição :** Apresenta as informações do Voo indicado
+- **Informações :**
+    - Apresenta o ID, companhia, modelo do avião, aeroportos de origem e destino, datas e horas estimadas de partida e chegada, tempo de atraso, número de passageiros esperados, número de passageiros que não embarcaram e se foi cancelado
+    - Lista de Utilizadores (passageiros)
+- **Funcionalidades :**
+    - O ID dos aeroportos devem ser clicáveis e devemos ir para a página do aeroporto selecionado
+    - O ID dos passageiros devem ser clicáveis e devemos ir para a página do utilizador selecionado
+    - Deverá ser possível voltar atras
+    - Deverá ser possível ir à página de voos
+    - Deverá ser possível apagar ou adicionar utilizadores
+- **Exceções :**
+    - Voo não existe
+
+| **Requisito 14** |
+|---------------|
+- **Título :** Página de Voos
+- **URL :** `GET /flights`
+- **Descrição :** Apresenta as informações de todos os voos
+- **Informações :**
+    - Lista de voos
+    - Em cada voo, apresenta o ID, aeroportos de origem e destino, número de passageiros e se está ativo
+- **Funcionalidades :**
+    - O ID do voo poderá ser clicável, redirecionando para a página do voo
+    - O ID do aeroporto poderá ser clicável, redirecionando para a página do aeroporto
+    - Deverá ser possível voltar para a página inicial
+    - Deverá ter um botão para adicionar um novo voo
+    - Deverá ser possível apagar ou editar um voo específico
+    - Deverá ter um sistema de paginação
+- **Exceções :**
+
+| **Requisito 15** |
+|---------------|
+- **Título :** Página de Editar um Voo
+- **URL :** `GET /edit-flight/:id`
+- **Descrição :** Apresenta as informações do Voo e é possível edita-las
+- **Informações :**
+    - Informações do voo
+    - Lista de passageiros do voo
+- **Funcionalidades :**
+    - Os campos do voo, exceto o ID, poderão ser editáveis
+    - É possível remover e adicionar passageiros
+    - Tem que ter um botão onde as alterações são submetidas
+- **Exceções :**
+    - Campos estão inválidos
+    - Voo não existe
+
+| **Requisito 16** |
+|---------------|
+- **Título :** Página de Criar um Voo
+- **URL :** `GET /create-flight`
+- **Descrição :** Apresenta as informações do novo Voo
+- **Informações :**
+    - Campos com as informações do novo voo
+- **Funcionalidades :**
+    - Os campos do voo poderão ser editáveis ou selecionáveis
+    - É possível remover e adicionar passageiros
+    - Tem que ter um botão onde é possível submeter o novo voo
+- **Exceções :**
+    - Campos estão inválidos
+
+| **Requisito 17** |
+|---------------|
+- **Título :** Página de um Aeroporto
+- **URL :** `GET /airports/:id`
+- **Descrição :** Apresenta as informações do Aeroporto indicado
+- **Informações :**
+    - Apresenta o ID, código do país, ano de inauguração, se está ativo e quantos voos partiram e chegaram no aeroporto
+    - Lista de voos do aeroporto, indicando se partiram ou se chegaram do aeroporto considerado e indicando 2 datas
+- **Funcionalidades :**
+    - O código de país deve ser clicável e devemos ir para a página do país
+    - o ID do voo deverá ser clicável
+    - As datas dos voos poderão ser editáveis
+    - Deverá ser possível voltar atras
+    - Deverá ser possível ir à página de aeroportos
+    - Deverá ser possível apagar ou editar o aeroporto
+- **Exceções :**
+    - Aeroporto não existe
+
+| **Requisito 18** |
+|---------------|
+- **Título :** Página de Aeroportos
+- **URL :** `GET /airports`
+- **Descrição :** Apresenta as informações de todos os aeroportos
+- **Informações :**
+    - Lista de aeroportos
+    - Em cada Aeroporto, apresenta o ID, nome, número de voos e se está ativo
+- **Funcionalidades :**
+    - O ID do aeroporto poderá ser clicável, redirecionando para a página do aeroporto
+    - Deverá ser possível voltar para a página inicial
+    - Deverá ter um botão para adicionar um novo aeroporto
+    - Deverá ser possível apagar ou editar um aeroporto específico
+    - Deverá ter um botão onde é possível ver o top aeroportos com maior mediana de atraso
+    - Deverá ter um botão onde é possível ver o top aeroportos com mais passageiros num dado ano
+    - Deverá ter um sistema de paginação
+- **Exceções :**
+
+| **Requisito 19** |
+|---------------|
+- **Título :** Página de Editar um Aeroporto
+- **URL :** `GET /edit-airport/:id`
+- **Descrição :** Apresenta as informações do Aeroporto e é possível edita-las
+- **Informações :**
+    - Informações do aeroporto
+    - Lista de voos do aeroporto
+- **Funcionalidades :**
+    - Os campos do aeroporto, exceto o ID, poderão ser editáveis
+    - É possível remover e adicionar voos
+    - Tem que ter um botão onde as alterações são submetidas
+- **Exceções :**
+    - Campos estão inválidos
+    - Aeroporto não existe
+
+| **Requisito 20** |
+|---------------|
+- **Título :** Página de Criar um Aeroporto
+- **URL :** `GET /create-airport`
+- **Descrição :** Apresenta as informações do novo Aeroporto
+- **Informações :**
+    - Campos com as informações do novo aeroporto
+- **Funcionalidades :**
+    - Os campos do aeroporto poderão ser editáveis ou selecionáveis
+    - É possível remover e adicionar voos
+    - Tem que ter um botão onde é possível submeter o novo aeroporto
+- **Exceções :**
+    - Campos estão inválidos
 
 
 ### 3.4. Requisitos Não Funcionais
