@@ -353,7 +353,7 @@ _Nota : O número de noites de uma reserva é calculado a partir da diferença e
 |------------|---|
 | **Título** | Lista de reservas |
 | **URL**| `GET /reservations` |
-| **Funcionalidade** | Dá a lista de reservas, indicando se cada reserva foi reembolsada ou não, o seu ID, o hotel onde pertence e o preço total |
+| **Funcionalidade** | Dá a lista de reservas, indicando se cada reserva foi reembolsada ou não, o seu ID, o hotel e o utilizador onde pertence e o preço total |
 | **Entrada** | - |
 | **Saída** | Lista de reservas com as informações indicadas acima |
 | **Pré-Condição** | - |
@@ -656,21 +656,19 @@ _Nota : as classificações consideradas das reservas devem existir. Se uma rese
 
 |  | **Requisito 33** |
 |------------|---|
-| **Título** | Top N aeroportos com mais passageiros |
-| **URL**| `GET /top-passengers-airport/:year/:number` |
-| **Funcionalidade** | Dado um ano e um número, devemos indicar quais são os top N (este N é o número) aeroportos com maior número de passageiros (que partiram e chegaram) num certo ano |
-| **Entrada** | Ano e um Número |
-| **Saída** | Lista de aeroportos ordenados, onde cada elemento tem o ID do aeroporto e o número de passageiros |
-| **Pré-Condição** | Ano válido e Número positivo |
+| **Título** | Top aeroportos com a mais voos |
+| **URL**| `GET /top-flights-airport` |
+| **Funcionalidade** | Devemos indicar o top aeroportos com maior número de voos |
+| **Entrada** | - |
+| **Saída** | Lista de aeroportos ordenados, onde cada elemento tem o ID do aeroporto e o número de voos |
+| **Pré-Condição** | - |
 | **Pós-Condição** | Lista de aeroportos |
-| **Exceções** | Ano inválido ou Número zero ou negativo |
-
-_Nota : Na comparação, caso 2 aeroportos tenham o mesmo número, deverá ser usado o ID, de forma crescente, como forma de desempate_
+| **Exceções** | - |
 
 |  | **Requisito 34** |
 |------------|---|
 | **Título** | Top aeroportos com mais passageiros |
-| **URL**| `GET /top-passengers-airport/:year` |
+| **URL**| `GET /top-passengers-airport-year/:year` |
 | **Funcionalidade** | Dado um ano e um número, devemos indicar quais são os top aeroportos com maior número de passageiros (que partiram e chegaram) num certo ano |
 | **Entrada** | Ano |
 | **Saída** | Lista de aeroportos ordenados, onde cada elemento tem o ID do aeroporto e o número de passageiros |
@@ -696,17 +694,14 @@ _Nota 2 : O atraso deverá ser apresentado em segundos_
 
 |  | **Requisito 36** |
 |------------|---|
-| **Título** | Top N aeroportos com a maior mediana de atrasos |
-| **URL**| `GET /top-delay-airport/:number` |
-| **Funcionalidade** | Devemos indicar o top N (N é o número indicado) aeroportos com maior mediana de atrasos |
-| **Entrada** | Número |
-| **Saída** | Lista de aeroportos ordenados, onde cada elemento tem o ID do aeroporto e a mediana de atrasos |
-| **Pré-Condição** | Número positivo |
-| **Pós-Condição** | Lista de aeroportos |
-| **Exceções** | Número nulo ou negativo |
-
-_Nota : Na comparação, caso 2 aeroportos tenham a mesma mediana, deverá ser usado o ID, de forma crescente, como forma de desempate_  
-_Nota 2 : O atraso deverá ser apresentado em segundos_
+| **Título** | Top hoteis com maior classificação média |
+| **URL**| `GET /top-rating-hotels` |
+| **Funcionalidade** | Devemos indicar o top hoteis com maior classificação média |
+| **Entrada** | - |
+| **Saída** | Lista de hoteis ordenados, onde cada elemento tem o ID do hotel e a classificação |
+| **Pré-Condição** | - |
+| **Pós-Condição** | Lista de hoteis |
+| **Exceções** | - |
 
 |  | **Requisito 37** |
 |------------|---|
@@ -723,16 +718,14 @@ _Nota : Na comparação, caso 2 hoteis tenham a mesma quantidade de reservas, de
 
 |  | **Requisito 38** |
 |------------|---|
-| **Título** | Top N hoteis com mais reservas |
-| **URL**| `GET /top-reservations-hotels/:number` |
-| **Funcionalidade** | Devemos indicar o top N (N sendo o número indicado) hoteis com mais reservas |
-| **Entrada** | Número |
-| **Saída** | Lista de hoteis ordenados, onde cada elemento tem o ID do hotel e a quantidade de reservas |
-| **Pré-Condição** | Número positivo |
+| **Título** | Top hoteis com maior receita |
+| **URL**| `GET /top-revenue-hotels` |
+| **Funcionalidade** | Devemos indicar o top hoteis com mais receita total |
+| **Entrada** | - |
+| **Saída** | Lista de hoteis ordenados, onde cada elemento tem o ID do hotel e a receita |
+| **Pré-Condição** | - |
 | **Pós-Condição** | Lista de hoteis |
-| **Exceções** | Número nulo ou negativo |
-
-_Nota : Na comparação, caso 2 hoteis tenham a mesma quantidade de reservas, deverá ser usado o ID, de forma crescente, como forma de desempate_  
+| **Exceções** | - |
 
 
 |  | **Requisito 39** |
@@ -895,28 +888,6 @@ _Notas:_
 
 |  | **Requisito 51** |
 |------------|---|
-| **Título** | Listar os países |
-| **URL**| `GET /countries` |
-| **Funcionalidade** | Apresenta todos os países registados no sistema |
-| **Entrada** | - |
-| **Saída** | Lista de países, onde em cada país tem a quantidade de utilizadores, hoteis, aeroportos, voos, reservas e passageiros que chegaram e partiram de um país ou que foram realizados nesse país (no caso de reservas, voos e passageiros) |
-| **Pré-Condição** | - |
-| **Pós-Condição** | Lista de países |
-| **Exceções** | - |
-
-|  | **Requisito 52** |
-|------------|---|
-| **Título** | Resumo de um país |
-| **URL**| `GET /countries/:id` |
-| **Funcionalidade** | Apresenta informações de um país |
-| **Entrada** | - |
-| **Saída** | ID e nome do país, a quantidade de utilizadores ativos e inativos, hoteis ativos e inativos, aeroportos ativos e inativos, voos efetuados e cancelados, reservas efetuadas ou reembolsadas e passageiros que chegaram e partiram de um país ou que foram realizados nesse país (no caso de reservas, voos e passageiros. Nos passageiros apenas os que embarcaram) |
-| **Pré-Condição** | País tem que existir |
-| **Pós-Condição** | Informação do País |
-| **Exceções** | País não existe |
-
-|  | **Requisito 53** |
-|------------|---|
 | **Título** | Receita total de um hotel |
 | **URL**| `GET /revenue-all-time-hotel/:id` |
 | **Funcionalidade** | Dado um Hotel, devemos indicar qual a receita total que o hotel irá obter, apenas com o preço por noite das reservas |
@@ -925,6 +896,21 @@ _Notas:_
 | **Pré-Condição** | Hotel existe |
 | **Pós-Condição** | Receita total do hotel |
 | **Exceções** | Hotel não existe |
+
+_Nota : Na comparação, caso 2 hoteis tenham a mesma quantidade de reservas, deverá ser usado o ID, de forma crescente, como forma de desempate_  
+
+|  | **Requisito 52** |
+|------------|---|
+| **Título** | Top aeroportos com mais passageiros |
+| **URL**| `GET /top-passengers-airport` |
+| **Funcionalidade** | Devemos indicar quais são os top aeroportos com maior número de passageiros (que partiram e chegaram) |
+| **Entrada** | - |
+| **Saída** | Lista de aeroportos ordenados, onde cada elemento tem o ID do aeroporto e o número de passageiros |
+| **Pré-Condição** | - |
+| **Pós-Condição** | Lista de aeroportos |
+| **Exceções** | - |
+
+_Nota : Na comparação, caso 2 aeroportos tenham o mesmo número, deverá ser usado o ID, de forma crescente, como forma de desempate_
 
 ### 3.2. Validação de dados
 
@@ -1330,10 +1316,95 @@ _Notas : O frontend deverá ter um sistema de idioma permitindo Inglês e Portug
 - **Exceções :**
     - Campos estão inválidos
 
+| **Requisito 21** |
+|---------------|
+- **Título :** Página de Top Hoteis
+- **URL :** `GET /top-hotels`
+- **Descrição :** Apresenta os Top Hoteis segundo um certo critério
+- **Informações :**
+    - Lista de Top hoteis conforme os seguintes critérios
+        - Número de Reservas
+        - Classificações
+        - Receita total
+- **Funcionalidades :**
+    - O ID do hotel poderá ser clicável, redirecionando para a página do hotel
+    - Deverá ser possível voltar para a página inicial
+    - Deverá ter um botão para ver todos os hoteis
+    - Deverá ser possível mudar o critério usando botões
+- **Exceções :**
+
+| **Requisito 22** |
+|---------------|
+- **Título :** Página de Top Aeroportos
+- **URL :** `GET /top-airports`
+- **Descrição :** Apresenta os Top Aeroportos segundo um certo critério
+- **Informações :**
+    - Lista de Top aeroportos conforme os seguintes critérios
+        - Número de Voos
+        - Mediana de atraso
+        - Passageiros
+        - Passageiros num certo ano
+- **Funcionalidades :**
+    - O ID do aeroporto poderá ser clicável, redirecionando para a página do aeroporto
+    - Deverá ser possível voltar para a página inicial
+    - Deverá ter um botão para ver todos os aeroportos
+    - Deverá ser possível mudar o critério usando botões
+    - Na lista de passageiros, podemos indicar um ano para ver o top aeroportos com maior número de passageiros
+- **Exceções :**
+
+| **Requisito 23** |
+|---------------|
+- **Título :** Página de Métricas
+- **URL :** `GET /metrics`
+- **Descrição :** Apresenta as métricas conforme certos parâmetros
+- **Informações :**
+    - Lista de métricas
+- **Funcionalidades :**
+    - Deverá ter opções para selecionar ano e mês e um botão para iniciar a pesquisa
+    - Deverá ser possível voltar para a página inicial
+- **Exceções :**
+
+| **Requisito 24** |
+|---------------|
+- **Título :** Página de Informações da App
+- **URL :** `GET /about`
+- **Descrição :** Apresenta informações sobre a aplicação
+- **Informações :**
+    - Apresenta informações sobre a aplicação e o seu desenvolvimento
+- **Funcionalidades :**
+    - Deverá ser possível voltar para a página inicial
+- **Exceções :**
+
+| **Requisito 25** |
+|---------------|
+- **Título :** Página Inicial
+- **URL :** `GET /`
+- **Descrição :** Apresenta alguns resumos da aplicação e expõe as suas funcionalidades
+- **Informações :**
+    - Apresenta algumas informações relevantes, até 3 ou 5
+    - Apresenta botões onde é possível ver:
+        - Utilizadores
+        - Reservas
+        - Voos
+        - Aeroportos
+        - Hoteis
+    - Apresenta informações do sistema, como a quantidade de dados existentes
+- **Funcionalidades :**
+    - Os botões deverão ser clicáveis
+- **Exceções :**
+
+_**Notas :**_
+- _É possível que alguns requisitos sejam alterados para melhorar a aplicação_
 
 ### 3.4. Requisitos Não Funcionais
 
-
+Os requisitos não funcionais do sistema são:
+- A data do sistema é a data atual
+- Queries do backend deve ser rápido, não excedendo 1 segundo na maioria das páginas
+- A página de métricas não deve exceder de 10 segundos
+- O backend não pode exceder o uso de 4GB de RAM
+- O frontend deverá explicar o sistema para que qualquer pessoa consiga entende-lo mesmo nunca ter estudado/ouvido do sistema
+- A quantidade de memória da base de dados não tem restrições
 
 ## 4. Preparação e Tratamento dos Dados
 
