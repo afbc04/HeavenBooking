@@ -13,7 +13,7 @@
 - [1. Introdução](#1-introdução)
     - [1.1. Motivação e Objetivos](#11-motivação-e-objetivos)
     - [1.2. Tema](#12-tema)
-- [2. Recolha do Dataset](#2-recolha-do-dataset)
+- [2. Preparação do Dataset](#2-preparação-do-dataset)
     - [2.1. Alteração dos Datasets](#21-alteração-dos-datasets)
     - [2.2. Análise e Resultado das alterações efetuadas](#22-análise-e-resultado-das-alterações-efetuadas)
 - [3. Requisitos](#3-requisitos)
@@ -21,7 +21,7 @@
     - [3.2. Validação de dados](#32-validação-de-dados)
     - [3.3. Requisitos Funcionais - Frontend](#33-requisitos-funcionais---frontend)
     - [3.4. Requisitos Não Funcionais](#34-requisitos-não-funcionais)
-- [4. Preparação e Tratamento dos Dados](#4-preparação-e-tratamento-dos-dados)
+- [4. Análise dos Dados](#4-análise-dos-dados)
 - [5. Arquitetura](#5-arquitetura)
 - [6. Esboço de Interfaces](#6-esboço-de-interfaces)
 - [7. Persistência de Dados](#7-persistência-de-dados)
@@ -67,7 +67,7 @@ Como este projeto tem o objetivo de ser uma aplicação web, ela terá:
 - **Modo de testes** para verificar se o sistema está correto
 - Faz muito mais sentido fazer uma abordagem do modo **interativo**, então o modo batch será ignorado
 
-## 2. Recolha do Dataset
+## 2. Preparação do Dataset
 
 A escolha de datasets é o principal foco neste projeto, pois todo o projeto anda à volta deles.
 Como dito acima, decidi utilizar os datasets atribuídos no projeto currícular (Laboratórios Informáticos III), pois:
@@ -469,7 +469,7 @@ _Nota : A lista deve estar ordenada de forma decrescente com base na data de cri
 |------------|---|
 | **Título** | Lista de hoteis |
 | **URL**| `GET /hotels` |
-| **Funcionalidade** | Dá a lista de hoteis, indicando se cada hotel está ativo ou não, o seu nome, o seu endereço, as suas estrelas e a quantidade de reservas |
+| **Funcionalidade** | Dá a lista de hoteis, indicando se cada hotel está ativo ou não, o seu nome, as suas estrelas e a quantidade de reservas |
 | **Entrada** | - |
 | **Saída** | Lista de hoteis com as informações indicadas acima |
 | **Pré-Condição** | - |
@@ -482,34 +482,34 @@ _Nota : A lista deve estar ordenada de forma decrescente com base na data de cri
 |------------|---|
 | **Título** | Criar um Hotel |
 | **URL**| `POST /hotels/` |
-| **Funcionalidade** | Validar os dados de um Utilizador e inseri-lo no sistema |
-| **Entrada** | Dados do Utilizador e o seu ID |
-| **Saída** | ID do utilizador, estado a indicar se o utilizador foi inserido e uma mensagem de erro caso não seja adicionada  |
-| **Pré-Condição** | Informação do Utilizador |
-| **Pós-Condição** | Utilizador inserido no Sistema |
-| **Exceções** | Validação do Utilizador falha |
+| **Funcionalidade** | Validar os dados de um Hotel e inseri-lo no sistema |
+| **Entrada** | Dados do Hotel |
+| **Saída** | ID do hotel, estado a indicar se o hotel foi inserido e uma mensagem de erro caso não seja adicionada  |
+| **Pré-Condição** | Informação do Hotel |
+| **Pós-Condição** | Hotel inserido no Sistema |
+| **Exceções** | Validação do Hotel falha |
 
 |  | **Requisito 19** |
 |------------|---|
-| **Título** | Editar um Utilizador |
+| **Título** | Editar um Hotel |
 | **URL**| `PUT /hotels/:id` |
-| **Funcionalidade** | Validar os dados novos do Utilizador e atualiza-lo |
-| **Entrada** | Dados novos do Utilizador e o seu ID |
-| **Saída** | ID do utilizador, estado a indicar se o utilizador foi editado e uma mensagem de erro caso não seja editado  |
-| **Pré-Condição** | Informação do Utilizador e Utilizador existe |
-| **Pós-Condição** | Utilizador atualizado no Sistema |
-| **Exceções** | Validação do Utilizador falha ou Utilizador não existe |
+| **Funcionalidade** | Validar os dados novos do Hotel e atualiza-lo |
+| **Entrada** | Dados novos do Hotel e o seu ID |
+| **Saída** | ID do hotel, estado a indicar se o hotel foi editado e uma mensagem de erro caso não seja editado  |
+| **Pré-Condição** | Informação do Hotel e Hotel existe |
+| **Pós-Condição** | Hotel atualizado no Sistema |
+| **Exceções** | Validação do Hotel falha ou Hotel não existe |
 
 |  | **Requisito 20** |
 |------------|---|
-| **Título** | Apagar um Utilizador |
+| **Título** | Apagar um Hotel |
 | **URL**| `DELETE /hotels/:id` |
-| **Funcionalidade** | Eliminar todas as ações do utilizador, como as suas reservas e voos |
-| **Entrada** | ID do Utilizador |
-| **Saída** | ID do utilizador, estado a indicar se o utilizador foi apagado e uma mensagem de erro caso não seja apagado  |
-| **Pré-Condição** | Utilizador existe |
-| **Pós-Condição** | Utilizador apagado no Sistema, juntamente com as suas ações |
-| **Exceções** | Utilizador não existe |
+| **Funcionalidade** | Eliminar todas as ações do hotel, como as suas reservas |
+| **Entrada** | ID do Hotel |
+| **Saída** | ID do hotel, estado a indicar se o hotel foi apagado e uma mensagem de erro caso não seja apagado  |
+| **Pré-Condição** | Hotel existe |
+| **Pós-Condição** | Hotel apagado no Sistema, juntamente com as suas ações |
+| **Exceções** | Hotel não existe |
 
 |  | **Requisito 21** |
 |------------|---|
@@ -1406,7 +1406,100 @@ Os requisitos não funcionais do sistema são:
 - O frontend deverá explicar o sistema para que qualquer pessoa consiga entende-lo mesmo nunca ter estudado/ouvido do sistema
 - A quantidade de memória da base de dados não tem restrições
 
-## 4. Preparação e Tratamento dos Dados
+## 4. Análise dos Dados
+
+Antes de iniciarmos a arquitetura do sistema, devemos analisar os dados dos **datasets** para percebermos que informação podemos extrair deles e quais são irrelevantes  
+A análise encontra-se no ficheiro excel [dataset_analysis.ods](Report/dataset_analysis.ods)  
+Na análise, cada coluna representa os requisitos funcionais (Backend) e cada linha representa um atributo do dataset.  
+Cada célula tem uma cor:
+- **Branco :** não é usado, devendo não ser guardado
+- **Preto :** é completamente usado, devendo ser guardado
+- **Cinza :** é usado para outra métrica, não precisa de ser guardado
+- **Amarelo :** requisitos de inserção e atualização precisam de todos os atributos, mesmo sendo usados ou não
+
+Com base na análise, podemos concluir as seguintes informações:
+1. **Utilizadores :**
+    - Usados totalmente :
+        - ID
+        - Nome
+        - Sexo
+        - Passaporte
+        - Código de País
+        - Estado da Conta
+    - Usados parcialmente :
+        - Data de Nascimento
+        - Data de criação de conta
+    - Não usados :
+        - Email
+        - Número de telemóvel
+        - Morada
+        - Método de pagamento
+2. **Reservas :**
+    - Usados totalmente :
+        - ID
+        - ID do Utilizador
+        - ID do Hotel
+        - Data de Inicio
+        - Data de Fim
+        - Se inclui pequeno-almoço
+        - Se foi reembolsada
+        - Classificação
+    - Usados parcialmente :
+        - Preço por noite
+    - Não usados :
+        - Detalhes do Quarto
+        - Comentários
+3. **Hoteis :**
+    - Usados totalmente :
+        - ID
+        - Nome
+        - Estrelas
+        - Endereço
+        - Código de País
+        - Website
+        - Se está ativo
+    - Usados parcialmente :
+        - Taxa da Cidade
+    - Não usados :
+        - País
+        - Número de telemóvel
+        - Código Pin
+4. **Voos :**
+    - Usados totalmente :
+        - ID
+        - Companhia
+        - Modelo de Avião
+        - Se foi cancelado
+        - Aeroporto Origem
+        - Aeroporto Destino
+        - Data de Partida Programada
+        - Data de Chegada Programada
+    - Usados parcialmente :
+        - Data de Partida Real
+        - Data de Chegada Real
+    - Não usados :
+        - Número total de assentos
+        - Piloto
+        - Copiloto
+        - Notas
+5. **Aeroportos :**
+    - Usados totalmente :
+        - ID
+        - Nome
+        - Código de País
+        - Ano de Inauguração
+        - Se está ativo
+    - Usados parcialmente : _Não há_
+    - Não usados :
+        - Código IATA
+        - País
+6. **Passageiros :**
+    - Usados totalmente :
+        - Se o Utilizador embarcou
+    - Usados parcialmente :
+        - ID do Voo
+        - ID do Utilizador
+    - Não usados : _Não há_
 
 ## 5. Arquitetura
 
