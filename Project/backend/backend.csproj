@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FastCSV" Version="1.0.1" />
+    <PackageReference Include="MySql.Data" Version="9.3.0" />
+  </ItemGroup>
+
 </Project>

@@ -36,7 +36,7 @@ export default {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch('http://localhost:25000/');
+        const res = await fetch('/api');
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         this.items = data; // assume que data é um array
