@@ -5,45 +5,56 @@ using System.Threading;
 using HeavenBooking;
 using Interface;
 
-namespace HeavenBooking
-{
-    class Program
-    {
+namespace HeavenBooking {
+    class Program {
 
         static IRouter? router;
 
-        static void Main(string[] args)
-        {
-            HttpListener serverSocket = new HttpListener();
-            serverSocket.Prefixes.Add("http://localhost:25000/");
-            serverSocket.Start();
+        static void Main(string[] args) {
 
-            //---- [ Initializing Backend ] ----
-            try
-            {
-                Program.router = new Router();
-            }
-            catch (FacadeDataBaseException)
-            {
-                LogMessage(LogMessages.ERROR, "Database is not connected...");
+            HttpListener? serverSocket = InitProgram(25000);
+
+            if (serverSocket == null)
                 return;
-            }
 
-            LogMessage(LogMessages.SUCCESS, "Backend listening on port 25000...");
-            LogMessage(LogMessages.BLANK, $"\n--- [ Logs ] ---\n");
-
-            while (true)
-            {
+            while (serverSocket.IsListening) {
                 HttpListenerContext context = serverSocket.GetContext();
                 ThreadPool.QueueUserWorkItem(HandleContext, context);
+            }
+            
+        }
+
+        /// <summary>
+        /// Tries to init the facade and router
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns>HttpListener is successed</returns>
+        private static HttpListener? InitProgram(int port) {
+
+            try {
+
+                Program.router = new Router();
+                HttpListener serverSocket = new HttpListener();
+                serverSocket.Prefixes.Add($"http://localhost:{port}/");
+                serverSocket.Start();
+
+                LogMessage(LogMessages.SUCCESS, $"Backend listening on port {port}...");
+                LogMessage(LogMessages.BLANK, $"\n--- [ Logs ] ---\n");
+
+                return serverSocket;
 
             }
+            catch (Exception ex) {
+                LogMessage(LogMessages.ERROR, ex.Message);
+            }
+
+            return null;
+
         }
 
 
         // Method which processes and handles a context
-        static void HandleContext(object? context_obj)
-        {
+        private static void HandleContext(object? context_obj) {
 
             if (context_obj is null || router == null)
                 return;
@@ -52,106 +63,38 @@ namespace HeavenBooking
             HttpListenerRequest request = context.Request;
             HttpListenerResponse response = context.Response;
 
-            if (request == null)
+            if (request == null || response == null)
                 return;
 
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            int statusCode = 500;
+            RouterPacket packet = new(500);
 
-            try
-            {
-
-                //CORS
-                response.AddHeader("Access-Control-Allow-Origin", "*");
-                response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-                response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
-
-                if (request.HttpMethod == "OPTIONS")
-                {
-                    statusCode = 200;
-                    response.StatusCode = statusCode;
-                    response.Close();
-                    LogRequest(request, statusCode, 0, 0);
-                    return;
-                }
-
-                if (request.Url == null)
-                {
-                    statusCode = 400;
-                    response.StatusCode = statusCode;
-                    response.Close();
-                    LogRequest(request, statusCode, 0, 0);
-                    return;
-                }
-
-                string[] segments_of_path = request.Url.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                if (segments_of_path.Length == 0)
-                    segments_of_path = [""];
-
-                string responseJSON = "";
-
-                try
-                {
-
-                    responseJSON = request.HttpMethod switch
-                    {
-                        "GET" => router.GetRequests(request, response, request.Url.AbsolutePath, segments_of_path),
-                        "POST" => router.PostRequests(request, response, request.Url.AbsolutePath, segments_of_path),
-                        "PUT" => router.PutRequests(request, response, request.Url.AbsolutePath, segments_of_path),
-                        "DELETE" => router.DeleteRequests(request, response, request.Url.AbsolutePath, segments_of_path),
-                        _ => throw new RouterException(501),
-                    };
-
-                    statusCode = response.StatusCode;
-
-                }
-                catch (RouterException error)
-                {
-                    statusCode = error.error_code;
-                    router.ErrorRequest(response, statusCode);
-                }
-
-
-                byte[] buffer = Encoding.UTF8.GetBytes(responseJSON);
-                response.ContentLength64 = buffer.Length;
-                response.ContentType = "application/json";
-
-                Stream output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Dispose();
-                
-
+            try {
+                packet = Program.router.ReadPacket(request);
             }
-            catch (Exception ex)
-            {
-                LogMessage(LogMessages.ERROR, $"Error processing Request: {ex.Message}");
+            catch (Exception error) {
+                LogMessage(LogMessages.ERROR, error.Message);
             }
-            finally
-            {
+            
+            Program.router.WritePacket(response, packet);
 
-                sw.Stop();
-                LogRequest(request, statusCode, sw.ElapsedMilliseconds, 0);
-                response?.Close();
-            }
+            sw.Stop();
+            LogRequest(request, packet.StatusCode, sw.ElapsedMilliseconds, packet.JSON == null ? 0 : packet.JSON.Length);  
+          
         }
 
         //Method which logs a HTTP Request
-        static void LogRequest(HttpListenerRequest request, int statusCode, long durationMs, long responseLength)
+        private static void LogRequest(HttpListenerRequest request, int status_code, long duration_ms, long packet_length)
         {
             ConsoleColor originalColor = Console.ForegroundColor;
             ConsoleColor statusColor = ConsoleColor.Gray;
-            ConsoleColor methodColor = ConsoleColor.Gray;
 
-            if (statusCode >= 500)
-                statusColor = ConsoleColor.DarkRed;
-            else if (statusCode >= 400)
-                statusColor = ConsoleColor.DarkYellow;
-            else if (statusCode >= 300)
-                statusColor = ConsoleColor.DarkCyan;
-            else if (statusCode >= 200)
-                statusColor = ConsoleColor.DarkGreen;
+            if (status_code >= 500) statusColor = ConsoleColor.DarkRed;
+            else if (status_code >= 400) statusColor = ConsoleColor.DarkYellow;
+            else if (status_code >= 300) statusColor = ConsoleColor.DarkCyan;
+            else if (status_code >= 200) statusColor = ConsoleColor.DarkGreen;
 
-            methodColor = request.HttpMethod switch
+            ConsoleColor methodColor = request.HttpMethod switch
             {
                 "GET" => ConsoleColor.Green,
                 "POST" => ConsoleColor.Yellow,
@@ -168,13 +111,13 @@ namespace HeavenBooking
             Console.Write($":: ");
 
             Console.ForegroundColor = statusColor;
-            Console.Write($"{statusCode,3} ");
+            Console.Write($"{status_code,3} ");
 
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write($"{request.Url?.AbsolutePath} ");
+            Console.Write($"{request.Url?.PathAndQuery} ");
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write($"{responseLength}b {durationMs}ms");
+            Console.Write($"{packet_length}b {duration_ms}ms");
 
             Console.Write("\n");
             Console.ForegroundColor = originalColor;

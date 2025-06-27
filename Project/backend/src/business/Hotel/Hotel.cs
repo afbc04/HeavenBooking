@@ -3,11 +3,42 @@ using System.Text.RegularExpressions;
 
 namespace Business {
 
-    public class User {
-        public string ID { set; get; }
+    public class Hotel {
+        public int ID { set; get; }
 
-        public User(string ID) {
+        public Hotel(int ID) {
             this.ID = ID;
+        }
+
+        /// <summary>
+        /// Converts data into a CSV format to be imported in mySQL
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="Name"></param>
+        /// <param name="Email"></param>
+        /// <param name="PhoneNumber"></param>
+        /// <param name="BirthDate"></param>
+        /// <param name="Sex"></param>
+        /// <param name="Passport"></param>
+        /// <param name="CountryCode"></param>
+        /// <param name="Address"></param>
+        /// <param name="AccountCreation"></param>
+        /// <param name="PayMethod"></param>
+        /// <param name="AccountStatus"></param>
+        /// <returns></returns>
+        public static string ToCSVString(string ID, string Name, string Email, string PhoneNumber, string BirthDate, string Sex, string Passport, string CountryCode, string Address, string AccountCreation, string PayMethod, string AccountStatus) {
+
+            bool is_user_active = false;
+            if (Regex.IsMatch(AccountStatus, "^active",RegexOptions.IgnoreCase) == true)
+                is_user_active = true;
+
+            Console.WriteLine($"{AccountStatus} : {is_user_active}");
+
+            short sex = 2;
+            if (Regex.IsMatch(Sex, "F", RegexOptions.IgnoreCase) == true) sex = 1;
+            if (Regex.IsMatch(Sex, "M", RegexOptions.IgnoreCase) == true) sex = 0;
+
+            return $"{ID};{Name};{BirthDate.Replace("/","-")};{sex};{Passport};{CountryCode};{AccountCreation.Split(" ")[0].Replace("/","-")};{(is_user_active == true ? 1 : 0)};0;0;0;0;0;0";
         }
 
         /// <summary>
@@ -26,7 +57,7 @@ namespace Business {
         /// <param name="PayMethod"></param>
         /// <param name="AccountStatus"></param>
         /// <returns></returns>
-        public static (bool, string?) ValidateUser(bool NewEntry,string ID, string Name, string Email, string? PhoneNumber, string BirthDate, string Sex, string Passport, string CountryCode, string? Address, string AccountCreation, string? PayMethod, string AccountStatus) {
+        public static (bool, string?) ValidateUser(bool NewEntry,string ID, string Name, string? Email, string? PhoneNumber, string BirthDate, string Sex, string Passport, string CountryCode, string? Address, string AccountCreation, string? PayMethod, string AccountStatus) {
 
             var validations = new (bool only_to_new_entries,string? field, string regex, string error_message, bool letter_case_doesnt_matter)[] {
                 (true, ID, ".+","id",false),

@@ -1,0 +1,7 @@
+HTTP/1.1 201 Created
+Content-Type: application/json
+Server: Microsoft-NetCore/2.0
+Date: Thu, 26 Jun 2025 18:27:24 GMT
+Content-Length: 493
+
+{"added":true,"user":"{\u0022id\u0022:\u0022Andre3\u0022,\u0022name\u0022:\u0022Ola Mundo\u0022,\u0022birth_date\u0022:\u00222004/02/07\u0022,\u0022age\u0022:21,\u0022country_code\u0022:\u0022PT\u0022,\u0022passport\u0022:\u0022TapaNaTotosa\u0022,\u0022reservations\u0022:0,\u0022reservations_refunded\u0022:0,\u0022flights\u0022:0,\u0022flights_arrived\u0022:0,\u0022flights_lost\u0022:0,\u0022total_spent\u0022:0,\u0022active\u0022:true,\u0022account_creation\u0022:\u00222004/02/07\u0022}"}

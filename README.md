@@ -755,7 +755,7 @@ _Nota : Na comparação, caso dois utilizadores tenham o mesmo nome, deverá ser
 |  | **Requisito 41** |
 |------------|---|
 | **Título** | Métricas totais |
-| **URL**| `GET /metrics-all` |
+| **URL**| `GET /metrics-years` |
 | **Funcionalidade** | Deverá ser dados métricas sobre o número de utilizadores registados, número de voos, número de passageiros, número de passageiros únicos e o número de reservas em cada ano registado no sistema |
 | **Entrada** | - |
 | **Saída** | Lista de anos onde em cada ano mostra as métricas desse ano |
@@ -774,7 +774,7 @@ _Notas:_
 |  | **Requisito 42** |
 |------------|---|
 | **Título** | Métricas de um ano |
-| **URL**| `GET /metrics-year/:year` |
+| **URL**| `GET /metrics-months/:year` |
 | **Funcionalidade** | Deverá ser dados métricas sobre o número de utilizadores registados, número de voos, número de passageiros, número de passageiros únicos e o número de reservas em cada mês de um certo ano |
 | **Entrada** | Ano |
 | **Saída** | Lista de meses do ano indicado onde em cada mês mostra as métricas desse mês |
@@ -793,7 +793,7 @@ _Notas:_
 |  | **Requisito 43** |
 |------------|---|
 | **Título** | Métricas de um mês de um ano |
-| **URL**| `GET /metrics-month/:year/:month` |
+| **URL**| `GET /metrics-days/:year/:month` |
 | **Funcionalidade** | Deverá ser dados métricas sobre o número de utilizadores registados, número de voos, número de passageiros, número de passageiros únicos e o número de reservas em cada dia de um certo mês de um certo ano |
 | **Entrada** | Ano e Mês |
 | **Saída** | Lista de dias do mês do ano indicados onde em cada dia mostra as métricas desse dia |

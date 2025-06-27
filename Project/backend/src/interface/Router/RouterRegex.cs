@@ -32,9 +32,9 @@ namespace Interface
         public static readonly Regex TopRevenueHotels = new(@"^/top-revenue-hotels($|\?)", RegexOptions.Compiled);
         public static readonly Regex RevenueHotel = new(@"^/revenue-hotel/.+/\d{4}-\d{2}-\d{2}/\d{4}-\d{2}-\d{2}($|\?)", RegexOptions.Compiled);
         public static readonly Regex PrefixUsers = new(@"^/prefix-users/.+($|\?)", RegexOptions.Compiled);
-        public static readonly Regex MetricsAll = new(@"^/metrics-all($|\?)", RegexOptions.Compiled);
-        public static readonly Regex MetricsYear = new(@"^/metrics-year/\d{1,}($|\?)", RegexOptions.Compiled);
-        public static readonly Regex MetricsMonth = new(@"^/metrics-month/\d{1,}/\d{2}($|\?)", RegexOptions.Compiled);
+        public static readonly Regex MetricsYears = new(@"^/metrics-years($|\?)", RegexOptions.Compiled);
+        public static readonly Regex MetricsMonths = new(@"^/metrics-months/\d{1,}($|\?)", RegexOptions.Compiled);
+        public static readonly Regex MetricsDays = new(@"^/metrics-days/\d{1,}/\d{2}($|\?)", RegexOptions.Compiled);
         public static readonly Regex GlobalInformation = new(@"^/global-information($|\?)", RegexOptions.Compiled);
         public static readonly Regex RevenueAllTimeHotel = new(@"^/revenue-all-time-hotel/.+($|\?)", RegexOptions.Compiled);
         public static readonly Regex TopPassengersAirport = new(@"^/top-passengers-airport($|\?)", RegexOptions.Compiled);

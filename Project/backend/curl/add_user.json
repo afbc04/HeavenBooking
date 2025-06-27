@@ -1,0 +1,14 @@
+{
+    "id": "Andre3",
+    "name": "Ola Mundo",
+    "phone_number" : "ejfvejfh",
+    "email" : "andre-da-silva@gmail.pt",
+    "birth_date" : "2004/02/07",
+    "sex" : "F",
+    "passport" : "TapaNaTotosa",
+    "country_code" : "PT",
+    "account_creation" : "2004/02/07 23:34:34",
+    "pay_method" : "hihi",
+    "account_status" : "active",
+    "address" : "a"
+}

@@ -4,14 +4,14 @@ using DataBase;
 namespace Business
 {
 
-    public class UserManager : IUserManager {
+    public class HotelManager : IHotelManager {
 
         private DAO _users;
         public int UsersQuantity { set; get; }
         public int ActiveUsersQuantity { set; get; }
         private ISet<string> _ids;
 
-        public UserManager() {
+        public HotelManager() {
 
             this._users = DAO.GetInstance();
             this._ids = new HashSet<string>();
@@ -50,6 +50,7 @@ namespace Business
         /// Creates a new User
         /// </summary>
         /// <returns>Returns if user was added, and if not, gives the reason via string</returns>
+        /*
         public (bool, string?, UserComplete?) AddUser(string ID, string Name, string Email, string PhoneNumber, string BirthDate, string Sex, string Passport, string CountryCode, string Address, string AccountCreation, string PayMethod, string AccountStatus) {
 
             if (this._ids.Contains(ID))
@@ -60,9 +61,7 @@ namespace Business
             if (isUserValid == false)
                 return (false, validationError,null);
 
-            var user_to_be_added = new UserBatch(ID, Name, Email, PhoneNumber, BirthDate, Sex, Passport, CountryCode, Address, AccountCreation, PayMethod, AccountStatus);
-
-            if (this._users.PutUser(user_to_be_added)) {
+            if (this._users.PutUser(ID, Name, Email, PhoneNumber, BirthDate, Sex, Passport, CountryCode, Address, AccountCreation, PayMethod, AccountStatus)) {
 
                 this._ids.Add(ID);
                 UserComplete user_added = this._users.GetUserByID(ID);
@@ -72,7 +71,7 @@ namespace Business
             else
                 return (false, "database-error",null);
 
-        }
+        }*/
 
         /// <summary>
         /// Deletes an user identified by ID
@@ -103,7 +102,9 @@ namespace Business
         /// <param name="PayMethod"></param>
         /// <param name="AccountStatus"></param>
         /// <returns></returns>
-        public (bool, string?, UserComplete) UpdateUser(string ID, string? Name,string? Email, string? BirthDate, string? Sex, string? Passport, string? CountryCode, string? AccountStatus) {
+        /// 
+        /*
+        public (bool, string?, UserComplete) UpdateUser(string ID, string? Name, string? BirthDate, string? Sex, string? Passport, string? CountryCode, string? AccountStatus) {
 
             UserComplete user = this._users.GetUserByID(ID);
 
@@ -114,21 +115,18 @@ namespace Business
             };
 
             string NewName = Name == null ? user.Name : Name;
-            string NewEmail = Email == null ? user.Email : Email;
             string NewBirthDate = BirthDate == null ? user.BirthDate : BirthDate;
             string NewSex = Sex == null ? OldSex : Sex;
             string NewPassport = Passport == null ? user.Passport : Passport;
             string NewCountryCode = CountryCode == null ? user.CountryCode : CountryCode;
             string NewAccountStatus = AccountStatus == null ? (user.IsActive ? "active" : "inactive") : AccountStatus;
 
-            (bool user_valid, string? error_message) = User.ValidateUser(false,ID,NewName,NewEmail,null,NewBirthDate,NewSex,NewPassport,NewCountryCode,null,user.AccountCreation,null,NewAccountStatus);
+            (bool user_valid, string? error_message) = User.ValidateUser(false,ID,NewName,null,null,NewBirthDate,NewSex,NewPassport,NewCountryCode,null,user.AccountCreation,null,NewAccountStatus);
 
             if (user_valid == false)
                 return (false, error_message,user);
 
-            var user_to_be_updated = new UserBatch(ID, NewName, NewEmail, "", NewBirthDate, NewSex, NewPassport, NewCountryCode, "", user.AccountCreation, "", NewAccountStatus);
-
-            if (this._users.PutUser(user_to_be_updated)) {
+            if (this._users.PutUser(ID, NewName, "", "", NewBirthDate, NewSex, NewPassport, NewCountryCode, "", user.AccountCreation, "", NewAccountStatus)) {
 
                 UserComplete user_updated = this._users.GetUserByID(ID);
                 return (true, null,user_updated);
@@ -137,50 +135,16 @@ namespace Business
             else
                 return (false, "database-error",user);
 
-        }
+        }*/
 
         /// <summary>
-        /// Gives a list of users
+        /// Gives a list of existing users
         /// </summary>
         /// <param name="page">Page of the Users List</param>
         /// <param name="limit">Limit of Users</param>
         /// <returns></returns>
         public IList<UserList> GetUsers(int page, int limit) {
             return this._users.GetUsers(page,limit);
-        }
-
-        /// <summary>
-        /// Gives a list of users which name has the given prefix
-        /// </summary>
-        /// <param name="page">Page of the Users List</param>
-        /// <param name="limit">Limit of Users</param>
-        /// <returns></returns>
-        public IList<UserPrefix> GetUsersPrefix(string prefix, int page, int limit) {
-            return this._users.GetUsersPrefix(prefix,page,limit);
-        }
-
-        /// <summary>
-        /// Gives how many users where created in each year
-        /// </summary>
-        /// <returns></returns>
-        public IDictionary<int,int> GetMetricsYears() {
-            return this._users.GetUsersMetricsYears();
-        }
-
-        /// <summary>
-        /// Gives how many users where created in each month of a given year
-        /// </summary>
-        /// <returns></returns>
-        public IDictionary<int,int> GetMetricsMonths(int year) {
-            return this._users.GetUsersMetricsMonths(year);
-        }
-
-        /// <summary>
-        /// Gives how many users where created in each day of a given month and year
-        /// </summary>
-        /// <returns></returns>
-        public IDictionary<int,int> GetMetricsDays(int year, int month) {
-            return this._users.GetUsersMetricsDays(year,month);
         }
 
         /// <summary>
@@ -199,8 +163,8 @@ namespace Business
                 return (false,error_message,0,0);
 
 
+            StreamWriter writer_of_valid_users = new("datasets/users.csv");
             StreamWriter writer_of_invalid_users = new("datasets/users_error.csv");
-            IList<UserBatch> list_of_valid_users = new List<UserBatch>();
 
             try {
 
@@ -243,7 +207,7 @@ namespace Business
                         if (is_user_id_taken == false && is_user_valid == true) {
 
                             this._ids.Add(user_ID);
-                            list_of_valid_users.Add(new UserBatch(user_ID, user_Name, user_Email, user_PhoneNumber, user_BirthDate, user_Sex, user_Passport, user_CountryCode, user_Address, user_AccountCreation, user_PayMethod, user_AccountStatus));
+                            //writer_of_valid_users.WriteLine(User.ToCSVString(user_ID, user_Name, user_Email, user_PhoneNumber, user_BirthDate, user_Sex, user_Passport, user_CountryCode, user_Address, user_AccountCreation, user_PayMethod, user_AccountStatus));
                             users_valid++;
 
                         }
@@ -260,7 +224,8 @@ namespace Business
 
                     if (users_valid > 0) {
 
-                        if (this._users.ImportUsers(list_of_valid_users)) {
+                        //if (this._users.ImportUsers()) {
+                        if (true) {
                             was_imported = true;
                             UpdateStatisticsOfManager();
                         }
@@ -278,6 +243,7 @@ namespace Business
 
                 reader.Close();
                 writer_of_invalid_users.Close();
+                writer_of_valid_users.Close();
 
             }
             catch (Exception) {
